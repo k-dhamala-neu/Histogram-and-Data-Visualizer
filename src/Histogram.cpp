@@ -1,0 +1,233 @@
+#include "Histogram.h"
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <cstdlib>
+#include <algorithm>
+using namespace std;
+
+Histogram::Histogram(const vector<DataPoint>& inputData) : binNum(0), binSize(0.0), range(0.0) {
+    data = inputData; // Stores the full dataset
+    range = getRange(); // Calculates and stores range on construction
+}
+
+Histogram::~Histogram() {}
+
+double Histogram::getMin() const { // Find minimum y value
+    double yMin = data[0].y; // From data = {(x1,y1), (x2,y2), ..., (xn,yn)}, takes the first element at the 0 index (which is (x1,y1)) and uses .y to pull the y1 val
+
+    for (int i = 1; i < data.size(); i++){ // starts at one since yMin set to index 0 already
+        if (data[i].y < yMin){
+            yMin = data[i].y;
+        }
+    }
+
+    return yMin;
+}
+
+double Histogram::getMax() const { 
+    double yMax = data[0].y;
+
+    for (int i = 1; i < data.size(); i++){ // starts at one since yMax set to index 0 already
+        if (data[i].y > yMax)
+        {
+            yMax = data[i].y;
+        }
+    }
+
+    return yMax;
+}
+
+double Histogram::getRange() const { // Calculates range from y values only; x is indep. variable (usually time)
+    return getMax() - getMin();
+}
+
+void Histogram::setBinNums(int nums) {
+    binNum = nums;
+    binSize = range / binNum; // setting a specific num of bins makes bin size dependent on it
+}
+
+void Histogram::setBinSize(double size) {
+    binSize = size;
+    binNum = (int)ceil(range / binSize); // num of bins now dependent; value rounded up to nearest int with ceil
+}
+
+int Histogram::getBinNums() const {
+    return binNum;
+}
+
+double Histogram::getBinSize() const {
+    return binSize;
+}
+
+const vector<binRanges> Histogram::getBinRanges() const {
+
+     //Finding Min as the starting point for the bin ranges
+    double min = getMin();
+    double max = getMax(); // Used later for an edge case of frequency
+
+
+
+    binRanges r;
+
+    r.lowEnd = min;
+    r.highEnd = min + binSize;
+    
+
+   vector <binRanges> binPointRanges; // Used to store each bin Value range
+
+   binPointRanges.push_back(r); // Adds the first bin range to the vector
+
+    for (int i = 1; i < binNum; i++){
+        r.lowEnd = r.highEnd; // Sets the new bin to have a lower end of the previous higher end
+        r.highEnd = r.highEnd + binSize;
+        binPointRanges.push_back(r); // Adds new bin range to the vector
+    }
+    return binPointRanges;
+}
+
+const vector<int> Histogram::getFrequency() const {
+
+    double min = getMin();
+    double max = getMax();
+    double epsilon = 1e-9;
+
+    vector<binRanges> binPointRanges = getBinRanges();
+
+    vector<int> frequency; // Used to store the amount of each y datapoint in each bin
+    int currFreq; // Current Frequency which will reset each bin
+    bool carryOver = false; // for Edge case that value is the bin's high/low end
+
+    for (int i = 0; i < binPointRanges.size(); i++){
+
+        if (carryOver){
+            currFreq = 1;
+        }
+        else{
+            currFreq = 0;
+        }
+        carryOver = false;
+
+        for (int j = 0; j < data.size(); j++){
+            if (data[j].y > binPointRanges[i].lowEnd && data[j].y < binPointRanges[i].highEnd) {
+                currFreq++;
+            } else if (abs(data[j].y - binPointRanges[i].lowEnd) < epsilon && abs(binPointRanges[i].lowEnd - min) < epsilon) {
+                currFreq++; // include minimum value in first bin
+            } else if (abs(data[j].y - binPointRanges[i].highEnd) < epsilon && abs(binPointRanges[i].highEnd - max) < epsilon) {
+                currFreq++; // include maximum value in last bin
+            } else if (data[j].y == binPointRanges[i].highEnd && binPointRanges[i].highEnd != max) {
+                carryOver = true;
+            }
+        }
+
+        frequency.push_back(currFreq);
+    }
+
+    return frequency;
+}
+
+void Histogram::genHist(){ //Text based histogram in console with the y values
+    if (binNum == 0){
+        cerr << "Error: Number of bins not set" << endl;
+        return; // Exits out of method
+    }
+
+    vector<binRanges> ranges = getBinRanges();
+    vector<int> frequency = getFrequency();
+
+    int maxFreq = 0;
+
+    for (int i = 0; i < frequency.size(); i++){
+         if (maxFreq < frequency[i]){
+            maxFreq = frequency[i];
+         }
+    }
+
+
+    cout << "Histogram \n" << endl;
+
+    for (int i = maxFreq; i > 0; i--){
+        for (int j = 0; j < binNum; j++){
+            if (frequency[j] >= i){
+                cout << "   x    ";
+            }
+            else {
+                cout << "        ";
+            }
+        
+        }
+        cout << endl;
+    }
+
+    for (int i = 0; i < binNum; i++){
+        cout << "Bin " << i + 1 << "   ";
+    }
+
+    cout << endl;
+
+}
+
+
+bool Histogram::exportHist(const string& fileName){
+    if (binNum == 0){
+        cerr << "Error: Number of bins not set" << endl;
+        return false;
+    }
+
+    vector<binRanges> ranges = getBinRanges();
+    vector<int> freqs = getFrequency();
+
+    // Write data to csv
+    ofstream dataFile("images/" + fileName);
+    if (!dataFile.is_open()){
+        cerr << "Error: Could not open file " << fileName << endl;
+        return false;
+    }
+
+    dataFile << "lowEnd,highEnd,frequency" << endl;
+    for (int i = 0; i < binNum; i++){
+        dataFile << ranges[i].lowEnd << "," << ranges[i].highEnd << "," << freqs[i] << endl;
+    }
+    dataFile.close();
+
+    // Write gnuplot script
+    ofstream gpFile("images/plotHistogram.gp");
+    if (!gpFile.is_open()){
+        cerr << "Error: Could not create gnuplot script" << endl;
+        return false;
+    }
+
+    gpFile << "set terminal png" << endl;
+    gpFile << "set output 'images/histogram.png'" << endl;
+    gpFile << "set title 'Histogram'" << endl;
+    gpFile << "set xlabel 'Value'" << endl;
+    gpFile << "set ylabel 'Frequency'" << endl;
+    gpFile << "set datafile separator ','" << endl;
+    gpFile << "set boxwidth " << binSize << " absolute" << endl;
+    gpFile << "set style fill solid border -1" << endl;
+    gpFile << "unset autoscale" << endl;
+    gpFile << "set yrange [0:" << *max_element(freqs.begin(), freqs.end()) + 1 << "] noreverse" << endl;
+    gpFile << "set xrange [" << ranges[0].lowEnd - binSize << ":" << ranges[binNum-1].highEnd + binSize << "]" << endl;
+    gpFile << "set xtics (";
+    for(int i = 0; i < binNum; i++){
+        double center = ranges[i].lowEnd + binSize/2;
+        gpFile << "'" << ranges[i].lowEnd << "-" << ranges[i].highEnd << "' " << center;
+        if(i < binNum - 1) gpFile << ", ";
+    }
+    gpFile << ")" << endl;
+    gpFile << "plot 'images/" << fileName << "' skip 1 using (($1+$2)/2):3 with boxes notitle" << endl;
+    gpFile.close();
+
+    // Print gnuplot script to console for debugging
+    //ifstream checkFile("plotHistogram.gp");
+    //string checkLine;
+    // while(getline(checkFile, checkLine)){
+    //     cout << checkLine << endl;
+    // }
+    // checkFile.close();
+
+    // Run gnuplot script
+    system("gnuplot images/plotHistogram.gp");
+
+    return true;
+}
