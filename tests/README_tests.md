@@ -1,6 +1,6 @@
 # Test Cases
 
-## Test 1 — Simple Bell Curve (test.csv)
+## Test 1 — Simple Distribution (test.csv)
 
 ### Dataset Description
 A 20 point dataset with y values rising from 1.5 to 8.5 over time, 
@@ -89,3 +89,7 @@ most y values are concentrated in the lower-middle range of the dataset.
 | Number of bins | 5 |
 | Bin size | 1.4 |
 | Output file | `images/histogram.png` |
+
+### Other Included Files
+The `tests/waveform_lab.csv` file is an additional dataset that can be loaded in `main.cpp` 
+and was obtained from actual physics lab data.
