@@ -96,3 +96,15 @@ Expected outputs and explanations for each test case are documented in `tests/RE
 - Provide a simple tool for analyzing time-series or waveform datasets
 - Display statistical summaries clearly in the console
 - Generate publication-quality histogram images automatically
+
+## AI Usage
+This project utilized AI assistance (Claude by Anthropic) in the following ways:
+
+- **Debugging** — Identifying and resolving runtime errors and logical bugs in C++ code
+- **Concept Explanation** — Clarifying C++ concepts outside of course material such as 
+   structs, advanced file I/O, and gnuplot integration
+- **Documentation Formatting** — Assistance with LaTeX formatting for pseudocode and 
+  system design documents, and structuring the README
+
+All core logic, design decisions, and implementation were completed by the team. 
+AI was not used to write functional code directly.
