@@ -7,7 +7,7 @@ using namespace std;
 
 
 int Menu() {
-    cout << "Menu:" << endl;
+    cout << "\n--- Main Menu ---" << endl;
     cout << "1. Load File" << endl;
     cout << "2. Display Statistics" << endl;
     cout << "3. Generate Histogram" << endl;
@@ -19,13 +19,6 @@ int Menu() {
 
     return choice;
 }
-
-
-
-
-
-
-
 
 
 
@@ -41,13 +34,6 @@ void displayStats(Statistics& stats) {
     cout << "Max: (" << stats.findMax().x << ", " << stats.findMax().y << ")" << endl;
     cout << "Min: (" << stats.findMin().x << ", " << stats.findMin().y << ")" << endl;
 }
-
-
-
-
-
-
-
 
 int main() {
 
@@ -70,7 +56,7 @@ int main() {
             }
             else{
                 Statistics stats(ds.getData());
-                displayStats(stats);
+               
             }
         }
         else if (choice == 3){
@@ -106,34 +92,5 @@ int main() {
     return 0;
 }
 
-   /*if (!ds.loadFile("tests/test.csv")){
-        return -1; // Exit if file fails to load
-    }
-
-    cout << endl;
-    cout << "Data size: " << ds.getSize() << endl;
-
-    // Statistics
-    Statistics stats(ds.getData());
-
-    displayStats(stats);
-    
-    // Histogram
-    Histogram hist(ds.getData());
-    hist.setBinNums(5); // Default 10 bins
-    hist.genHist();
-
-    vector<binRanges> ranges = hist.getBinRanges();
-    vector<int> freqs = hist.getFrequency();
-
-    cout << "\nBin Ranges and Frequencies:" << endl;
-    for (int i = 0; i < hist.getBinNums(); i++){
-        cout << "Bin " << i+1 << ": [" << ranges[i].lowEnd << " - " << ranges[i].highEnd << "] Freq: " << freqs[i] << endl;
-    }
-
-    cout << "Bin size: " << hist.getBinSize() << endl;
-    cout << "Bin nums: " << hist.getBinNums() << endl;
-
-    hist.exportHist("histogram.csv");*/
-
+  
     
