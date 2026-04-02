@@ -11,19 +11,19 @@ Statistics::Statistics(const vector<DataPoint>& inputData) {
 
 Statistics::~Statistics() {}
 
-double Statistics::compMean() {
+double Statistics::compMean () const {
     double sum = 0;
-    for (int i = 0; i < dataset.size(); i++){
+    for (size_t i = 0; i < dataset.size(); i++){
         sum += dataset[i].y;
     }
 
-    return (double) sum / dataset.size();
+    return static_cast<double>((sum) /(dataset.size()));
 }
 
-double Statistics::compMedian() {
+double Statistics::compMedian () const {
 
     vector<double> yVals;
-    for (int i = 0; i < dataset.size(); i++){
+    for (size_t i = 0; i < dataset.size(); i++){
         yVals.push_back(dataset[i].y);
     }
 
@@ -31,14 +31,14 @@ double Statistics::compMedian() {
 
     if (yVals.size() % 2 == 0){
         double midSum = yVals[((yVals.size() /2) - 1)] + yVals[(yVals.size() /2)];
-        return (double) midSum / 2;
+        return static_cast<double>((midSum) / 2);
     }
     else{
         return yVals[yVals.size() / 2];
     }
 }
 
-double Statistics::compMode() {
+double Statistics::compMode () const {
 
     if (dataset.size() == 0){
         cerr << "Error: No values in dataset." << endl;
@@ -50,7 +50,7 @@ double Statistics::compMode() {
     }
 
     vector<double> yVals;
-    for (int i = 0; i < dataset.size(); i++){
+    for (size_t i = 0; i < dataset.size(); i++){
         yVals.push_back(dataset[i].y);
     }
 
@@ -60,7 +60,7 @@ double Statistics::compMode() {
     int pos = 0;
     int leadingCount = 0;
 
-    for (int i = 1; i < yVals.size(); i++){
+    for ( size_t i = 1; i < yVals.size(); i++){
         if(yVals[i] == yVals[i-1]){
             count++;
             if (count > leadingCount){
@@ -82,29 +82,29 @@ double Statistics::compMode() {
 
 }
 
-double Statistics::compVar(){ // Population Variance
+double Statistics::compVar () const{ // Population Variance
 
     double sum = 0;
-    for (int i = 0; i < dataset.size(); i++){
+    for (size_t i = 0; i < dataset.size(); i++){
         sum += pow((dataset[i].y - mean),2);
     }
 
-    return (double) sum / dataset.size();
+    return static_cast<double>((sum) /(dataset.size()));
 }
 
 
-double Statistics::compStdDev() {
+double Statistics::compStdDev () const {
     double var = compVar();
 
     return pow(var,.5);
 }
 
-DataPoint Statistics::findMax() {
+DataPoint Statistics::findMax () const {
 
     double yMax = dataset[0].y;
     int pos = 0;
 
-    for (int i = 1; i < dataset.size(); i++){ // starts at one since yMax set to index 0 already
+    for (size_t i = 1; i < dataset.size(); i++){ // starts at one since yMax set to index 0 already
         if (dataset[i].y > yMax)
         {
             yMax = dataset[i].y;
@@ -116,12 +116,12 @@ DataPoint Statistics::findMax() {
 
 }
 
-DataPoint Statistics::findMin() {
+DataPoint Statistics::findMin () const {
 
     double yMin = dataset[0].y;
     int pos = 0;
 
-    for (int i = 1; i < dataset.size(); i++){ // starts at one since yMin set to index 0 already
+    for (size_t i = 1; i < dataset.size(); i++){ // starts at one since yMin set to index 0 already
         if (dataset[i].y < yMin)
         {
             yMin = dataset[i].y;
