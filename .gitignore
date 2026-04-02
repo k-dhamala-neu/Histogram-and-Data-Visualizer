@@ -1,4 +1,5 @@
 main
 *.o
 images/histogram.csv
-images/plotHistogram.gp.vscode/
+images/plotHistogram.gp
+.vscode/

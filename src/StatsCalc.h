@@ -15,12 +15,12 @@ class Statistics {
 
         // Functions
         double compMean(); // Calculates Mean
-        double compMedian(); // Calculates Median
-        double compMode(); // Calculates Mode
-        double compVar(); // Calculates Variance
-        double compStdDev(); // Calculates Standard Deviation
-        DataPoint findMax(); // Finds the Maximum Value at a certain point
-        DataPoint findMin(); // Finds the Minimum Value at a certain point
+        double compMedian() const; // Calculates Median
+        double compMode() const; // Calculates Mode
+        double compVar() const; // Calculates Variance
+        double compStdDev() const; // Calculates Standard Deviation
+        DataPoint findMax() const; // Finds the Maximum Value at a certain point
+        DataPoint findMin() const; // Finds the Minimum Value at a certain point
 
 };
 

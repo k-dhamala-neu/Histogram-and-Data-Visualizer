@@ -1,6 +1,7 @@
 # Test Cases
 
 ## Test 1 — Simple Distribution (test.csv)
+Run test case by selecting choice 5 from the program menu.
 
 ### Dataset Description
 A 20 point dataset with y values rising from 1.5 to 8.5 over time, 

@@ -11,7 +11,7 @@ Statistics::Statistics(const vector<DataPoint>& inputData) {
 
 Statistics::~Statistics() {}
 
-double Statistics::compMean () const {
+double Statistics::compMean () {
     double sum = 0;
     for (size_t i = 0; i < dataset.size(); i++){
         sum += dataset[i].y;
@@ -57,7 +57,7 @@ double Statistics::compMode () const {
     sort(yVals.begin(), yVals.end());
 
     int count = 1;
-    int pos = 0;
+    size_t pos = 0;
     int leadingCount = 0;
 
     for ( size_t i = 1; i < yVals.size(); i++){
@@ -102,7 +102,7 @@ double Statistics::compStdDev () const {
 DataPoint Statistics::findMax () const {
 
     double yMax = dataset[0].y;
-    int pos = 0;
+    size_t pos = 0;
 
     for (size_t i = 1; i < dataset.size(); i++){ // starts at one since yMax set to index 0 already
         if (dataset[i].y > yMax)
@@ -119,7 +119,7 @@ DataPoint Statistics::findMax () const {
 DataPoint Statistics::findMin () const {
 
     double yMin = dataset[0].y;
-    int pos = 0;
+    size_t pos = 0;
 
     for (size_t i = 1; i < dataset.size(); i++){ // starts at one since yMin set to index 0 already
         if (dataset[i].y < yMin)

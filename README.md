@@ -38,7 +38,7 @@ Project/
 │
 ├── README.md
 ├── docs/
-│   └── System_Design_Overview.pdf
+│   └── system_design_overview.pdf
 ├── pseudocode/
 │   └── pseudocode.txt
 ├── src/
@@ -51,6 +51,7 @@ Project/
 │   └── StatsCalc.cpp
 ├── tests/
 │   ├── test.csv
+│   ├── waveform_lab.csv
 │   └── README_tests.md
 └── images/
     ├── system_diagram.png
@@ -80,10 +81,7 @@ A sample test dataset is provided in the `tests/` folder to verify program funct
 |------|-------------|
 | `tests/test.csv` | Simple distribution dataset with 20 data points |
 
-To run with the test dataset, update the file path in `main.cpp`:
-```cpp
-ds.loadFile("tests/test.csv");
-```
+To run with the test dataset, select option 5 from the program menu.
 Expected outputs and explanations for each test case are documented in `tests/README_tests.md`.
 
 ## What Has Been Implemented
