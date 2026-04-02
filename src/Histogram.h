@@ -15,7 +15,7 @@ class Histogram {
     private:
         std::vector<DataPoint> data;  // Dataset passed in from Dataset class
         double range; // Range of values stored in dataset
-        int binNum; // Number of bins in histogram
+        size_t binNum; // Number of bins in histogram
         double binSize; // Size of each bin in the histogram
 
     public:
@@ -26,8 +26,8 @@ class Histogram {
         double getMin() const; // Gets minimum value of the dependent variable (y)
         double getMax() const; // Gets maximum value of the dependent variable (y)
         double getRange() const; // Gets the range of the dataset
-        void setBinNums(int nums); // Sets the number of bins for the histogram
-        int getBinNums() const; // Gets the number of bins for the histogram
+        void setBinNums(size_t nums); // Sets the number of bins for the histogram
+        size_t getBinNums() const; // Gets the number of bins for the histogram
         void setBinSize(double size); // Sets the value each bin holds
         double getBinSize() const; // Gets the value each bin holds
         const std::vector<binRanges> getBinRanges () const; // Gets the bin ranges for each bin

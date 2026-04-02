@@ -6,7 +6,7 @@
 #include <algorithm>
 using namespace std;
 
-Histogram::Histogram(const vector<DataPoint>& inputData) : binNum(0), binSize(0.0), range(0.0) {
+Histogram::Histogram(const vector<DataPoint>& inputData) : range(0.0), binNum(0), binSize(0.0) {
     data = inputData; // Stores the full dataset
     range = getRange(); // Calculates and stores range on construction
 }
@@ -16,7 +16,7 @@ Histogram::~Histogram() {}
 double Histogram::getMin() const { // Find minimum y value
     double yMin = data[0].y; // From data = {(x1,y1), (x2,y2), ..., (xn,yn)}, takes the first element at the 0 index (which is (x1,y1)) and uses .y to pull the y1 val
 
-    for (int i = 1; i < data.size(); i++){ // starts at one since yMin set to index 0 already
+    for (size_t i = 1; i < data.size(); i++){ // starts at one since yMin set to index 0 already
         if (data[i].y < yMin){
             yMin = data[i].y;
         }
@@ -28,7 +28,7 @@ double Histogram::getMin() const { // Find minimum y value
 double Histogram::getMax() const { 
     double yMax = data[0].y;
 
-    for (int i = 1; i < data.size(); i++){ // starts at one since yMax set to index 0 already
+    for (size_t i = 1; i < data.size(); i++){ // starts at one since yMax set to index 0 already
         if (data[i].y > yMax)
         {
             yMax = data[i].y;
@@ -42,17 +42,17 @@ double Histogram::getRange() const { // Calculates range from y values only; x i
     return getMax() - getMin();
 }
 
-void Histogram::setBinNums(int nums) {
+void Histogram::setBinNums(size_t nums) {
     binNum = nums;
     binSize = range / binNum; // setting a specific num of bins makes bin size dependent on it
 }
 
 void Histogram::setBinSize(double size) {
     binSize = size;
-    binNum = (int)ceil(range / binSize); // num of bins now dependent; value rounded up to nearest int with ceil
+    binNum = (size_t)ceil(range / binSize); // num of bins now dependent; value rounded up to nearest int with ceil
 }
 
-int Histogram::getBinNums() const {
+size_t Histogram::getBinNums() const {
     return binNum;
 }
 
@@ -64,9 +64,6 @@ const vector<binRanges> Histogram::getBinRanges() const {
 
      //Finding Min as the starting point for the bin ranges
     double min = getMin();
-    double max = getMax(); // Used later for an edge case of frequency
-
-
 
     binRanges r;
 
@@ -78,7 +75,7 @@ const vector<binRanges> Histogram::getBinRanges() const {
 
    binPointRanges.push_back(r); // Adds the first bin range to the vector
 
-    for (int i = 1; i < binNum; i++){
+    for (size_t i = 1; i < binNum; i++){
         r.lowEnd = r.highEnd; // Sets the new bin to have a lower end of the previous higher end
         r.highEnd = r.highEnd + binSize;
         binPointRanges.push_back(r); // Adds new bin range to the vector
@@ -98,7 +95,7 @@ const vector<int> Histogram::getFrequency() const {
     int currFreq; // Current Frequency which will reset each bin
     bool carryOver = false; // for Edge case that value is the bin's high/low end
 
-    for (int i = 0; i < binPointRanges.size(); i++){
+    for (size_t i = 0; i < binPointRanges.size(); i++){
 
         if (carryOver){
             currFreq = 1;
@@ -108,7 +105,7 @@ const vector<int> Histogram::getFrequency() const {
         }
         carryOver = false;
 
-        for (int j = 0; j < data.size(); j++){
+        for (size_t j = 0; j < data.size(); j++){
             if (data[j].y > binPointRanges[i].lowEnd && data[j].y < binPointRanges[i].highEnd) {
                 currFreq++;
             } else if (abs(data[j].y - binPointRanges[i].lowEnd) < epsilon && abs(binPointRanges[i].lowEnd - min) < epsilon) {
@@ -135,10 +132,10 @@ void Histogram::genHist(){ //Text based histogram in console with the y values
     vector<binRanges> ranges = getBinRanges();
     vector<int> frequency = getFrequency();
 
-    int maxFreq = 0;
+    size_t maxFreq = 0;
 
-    for (int i = 0; i < frequency.size(); i++){
-         if (maxFreq < frequency[i]){
+    for (size_t i = 0; i < frequency.size(); i++){
+         if (maxFreq < (size_t)frequency[i]){
             maxFreq = frequency[i];
          }
     }
@@ -146,9 +143,9 @@ void Histogram::genHist(){ //Text based histogram in console with the y values
 
     cout << "Histogram \n" << endl;
 
-    for (int i = maxFreq; i > 0; i--){
-        for (int j = 0; j < binNum; j++){
-            if (frequency[j] >= i){
+    for (size_t i = maxFreq; i > 0; i--){
+        for (size_t j = 0; j < binNum; j++){
+            if (frequency[j] >= (int)i){
                 cout << "   x    ";
             }
             else {
@@ -159,7 +156,7 @@ void Histogram::genHist(){ //Text based histogram in console with the y values
         cout << endl;
     }
 
-    for (int i = 0; i < binNum; i++){
+    for (size_t i = 0; i < binNum; i++){
         cout << "Bin " << i + 1 << "   ";
     }
 
@@ -185,7 +182,7 @@ bool Histogram::exportHist(const string& fileName){
     }
 
     dataFile << "lowEnd,highEnd,frequency" << endl;
-    for (int i = 0; i < binNum; i++){
+    for (size_t i = 0; i < binNum; i++){
         dataFile << ranges[i].lowEnd << "," << ranges[i].highEnd << "," << freqs[i] << endl;
     }
     dataFile.close();
@@ -209,7 +206,7 @@ bool Histogram::exportHist(const string& fileName){
     gpFile << "set yrange [0:" << *max_element(freqs.begin(), freqs.end()) + 1 << "] noreverse" << endl;
     gpFile << "set xrange [" << ranges[0].lowEnd - binSize << ":" << ranges[binNum-1].highEnd + binSize << "]" << endl;
     gpFile << "set xtics (";
-    for(int i = 0; i < binNum; i++){
+    for(size_t i = 0; i < binNum; i++){
         double center = ranges[i].lowEnd + binSize/2;
         gpFile << "'" << ranges[i].lowEnd << "-" << ranges[i].highEnd << "' " << center;
         if(i < binNum - 1) gpFile << ", ";
@@ -218,15 +215,6 @@ bool Histogram::exportHist(const string& fileName){
     gpFile << "plot 'images/" << fileName << "' skip 1 using (($1+$2)/2):3 with boxes notitle" << endl;
     gpFile.close();
 
-    // Print gnuplot script to console for debugging
-    //ifstream checkFile("plotHistogram.gp");
-    //string checkLine;
-    // while(getline(checkFile, checkLine)){
-    //     cout << checkLine << endl;
-    // }
-    // checkFile.close();
-
-    // Run gnuplot script
     system("gnuplot images/plotHistogram.gp");
 
     return true;

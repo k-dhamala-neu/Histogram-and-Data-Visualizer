@@ -33,7 +33,7 @@ int Menu() {
         }
 
         if (!isValid){
-            cout << "Invalid input. Please enter a whole number." << endl;
+            cout << "Invalid input. Please enter a whole number between 1 and 6." << endl;
         }
         else{
             choice = stoi(input); // string to int
@@ -83,7 +83,7 @@ void testCase(Dataset &ds){
     vector<int> freqs = hist.getFrequency();
 
     cout << "\nBin Ranges and Frequencies:" << endl;
-    for (int i = 0; i < hist.getBinNums(); i++){
+    for (size_t i = 0; i < hist.getBinNums(); i++){
         cout << "Bin " << i+1 << ": [" << ranges[i].lowEnd << " - " << ranges[i].highEnd << "] Freq: " << freqs[i] << endl;
     }
 

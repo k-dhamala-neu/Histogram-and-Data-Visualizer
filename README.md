@@ -66,7 +66,7 @@ sudo apt-get install gnuplot
 
 **Compile:**
 ```bash
-g++ main.cpp Dataset.cpp Histogram.cpp StatsCalc.cpp -o main
+g++ src/main.cpp src/Dataset.cpp src/Histogram.cpp src/StatsCalc.cpp -o main -Wall -Wextra -Wpedantic
 ```
 
 **Run:**
