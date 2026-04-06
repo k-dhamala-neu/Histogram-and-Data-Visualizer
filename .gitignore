@@ -3,3 +3,5 @@ main
 images/histogram.csv
 images/plotHistogram.gp
 .vscode/
+images/lineplot.csv
+images/plotLinePlot.gp

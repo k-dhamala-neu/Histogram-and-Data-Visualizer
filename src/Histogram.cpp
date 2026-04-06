@@ -6,6 +6,9 @@
 #include <algorithm>
 using namespace std;
 
+
+Histogram::Histogram() : range(0.0), binNum(0), binSize(0.0) {}
+
 Histogram::Histogram(const vector<DataPoint>& inputData) : range(0.0), binNum(0), binSize(0.0) {
     data = inputData; // Stores the full dataset
     range = getRange(); // Calculates and stores range on construction
@@ -44,12 +47,31 @@ double Histogram::getRange() const { // Calculates range from y values only; x i
 
 void Histogram::setBinNums(size_t nums) {
     binNum = nums;
+    if(binNum > 10){ // Max of 10 bins for directly set bins
+        binNum = 10;
+        cout << "Over Max Bin Size. Setting to Max Number of Bins (10)." << endl;
+    }
+    else if(binNum < 1){
+        binNum = 1;
+        cout << "Cannot Have less than 1 Number of Bins. Setting Number of Bins to 1." << endl;
+    }
     binSize = range / binNum; // setting a specific num of bins makes bin size dependent on it
 }
 
 void Histogram::setBinSize(double size) {
     binSize = size;
+    if (binSize <= 0){
+        binSize = 1;
+        cout << "Cannot have a Bin Size less than or equal to 0. Setting Bin Size to 1." << endl;
+    }
+
     binNum = (size_t)ceil(range / binSize); // num of bins now dependent; value rounded up to nearest int with ceil
+    if (binNum > 50){ // Max of 50 bins
+        binNum = 50;
+        binSize = range / binNum;
+        cout << "Bin Size too small. Adjusting to max of 50 bins." << endl;
+    }   // Number of bins capped at 50 when set via bin size for data flexibility
+        // Direct bin number input is capped at 10 for display readability
 }
 
 size_t Histogram::getBinNums() const {
@@ -205,6 +227,11 @@ bool Histogram::exportHist(const string& fileName){
     gpFile << "unset autoscale" << endl;
     gpFile << "set yrange [0:" << *max_element(freqs.begin(), freqs.end()) + 1 << "] noreverse" << endl;
     gpFile << "set xrange [" << ranges[0].lowEnd - binSize << ":" << ranges[binNum-1].highEnd + binSize << "]" << endl;
+    
+    if(binNum > 5){ //Rotates the bin ranges that are displayed so numbers dont overlap
+        gpFile << "set xtics rotate by -45" << endl;
+        gpFile << "set bmargin 5" << endl;
+    }
     gpFile << "set xtics (";
     for(size_t i = 0; i < binNum; i++){
         double center = ranges[i].lowEnd + binSize/2;
@@ -216,6 +243,43 @@ bool Histogram::exportHist(const string& fileName){
     gpFile.close();
 
     system("gnuplot images/plotHistogram.gp");
+
+    return true;
+}
+
+bool Histogram::exportLinePlot(const string& fileName){
+
+    // Write data to csv
+    ofstream dataFile("images/" + fileName);
+    if (!dataFile.is_open()){
+        cerr << "Error: Could not open file " << fileName << endl;
+        return false;
+    }
+
+    dataFile << "x,y" << endl;
+    for (size_t i = 0; i < data.size(); i++){
+        dataFile << data[i].x << "," << data[i].y << endl;
+    }
+    dataFile.close();
+
+    // Write gnuplot script
+    ofstream gpFile("images/plotLinePlot.gp");
+    if (!gpFile.is_open()){
+        cerr << "Error: Could not create gnuplot script" << endl;
+        return false;
+    }
+
+    gpFile << "set terminal png" << endl;
+    gpFile << "set output 'images/lineplot.png'" << endl;
+    gpFile << "set title 'Line Plot'" << endl;
+    gpFile << "set xlabel 'X'" << endl;
+    gpFile << "set ylabel 'Y'" << endl;
+    gpFile << "set datafile separator ','" << endl;
+    gpFile << "set grid" << endl;
+    gpFile << "plot 'images/" << fileName << "' skip 1 using 1:2 with lines notitle" << endl;
+    gpFile.close();
+
+    system("gnuplot images/plotLinePlot.gp");
 
     return true;
 }

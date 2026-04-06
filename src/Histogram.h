@@ -19,6 +19,7 @@ class Histogram {
         double binSize; // Size of each bin in the histogram
 
     public:
+        Histogram(); // default constructor
         Histogram(const std::vector<DataPoint>& inputData); // Constructor takes dataset
         ~Histogram(); 
 
@@ -34,6 +35,7 @@ class Histogram {
         const std::vector<int> getFrequency() const; // Gets the Frequency of each bin
         void genHist(); // Generates a text-based histogram
         bool exportHist(const std::string& fileName); // Shows the histogram as an image file
+        bool exportLinePlot(const std::string& fileName); // Exports x vs y line plot as an image file
 
 };
 
