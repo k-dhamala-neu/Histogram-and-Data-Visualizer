@@ -116,6 +116,8 @@ int main() {
         {
         case 1: // Load file
 
+            ds.clearData(); // clear previous data before loading new file
+
             cout << "What is the filepath for your chosen csv/txt file?" << endl;
             cin >> chosenfPath;
 

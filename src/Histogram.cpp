@@ -276,6 +276,35 @@ bool Histogram::exportLinePlot(const string& fileName){
     gpFile << "set ylabel 'Y'" << endl;
     gpFile << "set datafile separator ','" << endl;
     gpFile << "set grid" << endl;
+
+    //Setting Bounds for the plot
+    double xMin = data[0].x; 
+    double xMax = data[0].x;
+    double yMin = data[0].y;
+    double yMax = data[0].y;
+
+    for (size_t i = 1; i < data.size(); i++){
+        //Min for both x & y
+        if (data[i].x < xMin) xMin = data[i].x;
+        if (data[i].y < yMin) yMin = data[i].y;
+
+        //Max for both x & y
+        if (data[i].x > xMax) xMax = data[i].x;
+        if (data[i].y > yMax) yMax = data[i].y;
+    }
+ 
+    gpFile << "unset autoscale" << endl; //overriding defaulted bounds
+
+    gpFile << "set xrange [" << xMin << ":" << xMax << "]" << endl;
+
+    if (yMin < 1e-6){ //Y values are very small
+        gpFile << "set logscale y" << endl;
+        gpFile << "set yrange [" << max(yMin, 1e-300) << ":" << yMax << "]" << endl; // Max compares both values and returns the higher one; prevents logscaling of 0 which is undef.
+        } else {
+            gpFile << "set yrange [" << yMin << ":" << yMax << "]" << endl;
+        }
+
+
     gpFile << "plot 'images/" << fileName << "' skip 1 using 1:2 with lines notitle" << endl;
     gpFile.close();
 
