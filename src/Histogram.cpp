@@ -225,7 +225,7 @@ bool Histogram::exportHist(const string& fileName){
     gpFile << "set boxwidth " << binSize << " absolute" << endl;
     gpFile << "set style fill solid border -1" << endl;
     gpFile << "unset autoscale" << endl;
-    gpFile << "set yrange [0:" << *max_element(freqs.begin(), freqs.end()) + 1 << "] noreverse" << endl;
+    gpFile << "set yrange [0:" << *max_element(freqs.begin(), freqs.end()) + 1 << "] noreverse" << endl; //makes element returns iterator of the max element (the index/position); needs dereferencing with * to get the value
     gpFile << "set xrange [" << ranges[0].lowEnd - binSize << ":" << ranges[binNum-1].highEnd + binSize << "]" << endl;
     
     if(binNum > 5){ //Rotates the bin ranges that are displayed so numbers dont overlap
