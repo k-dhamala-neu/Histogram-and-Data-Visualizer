@@ -42,7 +42,14 @@ double Histogram::getMax() const {
 }
 
 double Histogram::getRange() const { // Calculates range from y values only; x is indep. variable (usually time)
-    return getMax() - getMin();
+    double range = getMax() - getMin();
+    if (abs(range) < 1e-9){  // All the values are the same; 1e-9 (or epsilon) is used since floating point numbers arent exact (eg. 3.0 = 3.000000004)
+        return 1; // Range is 1 value
+    }
+    else{
+        return range;
+    }
+    
 }
 
 void Histogram::setBinNums(size_t nums) {

@@ -42,7 +42,7 @@ double Statistics::compMode () const {
 
     if (dataset.size() == 0){
         cerr << "Error: No values in dataset." << endl;
-        return 0;
+        return numeric_limits<double>::quiet_NaN(); // NaN return since its a safe return that acts as a way to say N/A
     }
 
     if (dataset.size() == 1){
@@ -74,8 +74,7 @@ double Statistics::compMode () const {
     }
 
     if (leadingCount <= 1){
-    cout << "No Mode" << endl;
-    return 0;
+    return numeric_limits<double>::quiet_NaN();
 }
 
     return yVals[pos];

@@ -43,13 +43,23 @@ bool Dataset::loadFile(const std::string& fPath) {
     getline(file, line); // Only reads the first line (Column Headers) and doesnt store it
     //if first line is 'Time (t)', 'Distance (m)' then those lines wont get stored in the data vector; ensures only datapoints in the vector
 
+    bool extraDataMsg = false; // If there is more data than just x,y
+
     while (getline(file, line)) { // Reads file one line at a time until end of file
         
         stringstream fullLine(line); // Treats the current line as a string and reads from it
         string xVal, yVal;     // Strings to store the two values from the line
 
         getline(fullLine, xVal, delimiter); // Reads the full line until delimiter, stores in xVal
-        getline(fullLine, yVal, delimiter); // Continues reading the full line after the delimiter, stores remainder in yVal
+        getline(fullLine, yVal, delimiter); // Continues reading the line after the delimiter, stores remainder in yVal then moves to next line
+
+        // After reading xVal and yVal check if more data exists
+        string remaining;
+        getline(fullLine, remaining, '\n');
+        if (!remaining.empty() and extraDataMsg == false){
+            cerr << "Warning: Extra columns detected, only x and y values will be used." << endl;
+            extraDataMsg = true; // only print once, not for every row
+        }
 
 
         // Remove trailing \r if present (Windows line endings)
@@ -67,12 +77,18 @@ bool Dataset::loadFile(const std::string& fPath) {
         } catch (const out_of_range& e) {
             cerr << "Warning: Value out of range at line " << dataSize + 1 << ", skipping." << endl;
         } catch (const invalid_argument& e) {
-            cerr << "Warning: Invalid value at line " << dataSize + 1 << ", skipping." << endl;
+            cerr << "Warning: Incomplete or invalid data at line " << dataSize + 1 << ", skipping." << endl;
         }
         
     }
 
     file.close(); // Closes the file after reading
+
+    if (dataSize == 0){
+        cerr << "File has no data." << endl;
+        return false;
+    }
+
     return true;  // Returns true to signal success
 }
 

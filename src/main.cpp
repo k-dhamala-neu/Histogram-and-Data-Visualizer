@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "Dataset.h"
 #include "Histogram.h"
 #include "StatsCalc.h"
@@ -56,7 +57,13 @@ void displayStats(Statistics& stats) {
     cout << "\n--- Statistics ---" << endl;
     cout << "Mean: " << stats.compMean() << endl;
     cout << "Median: " << stats.compMedian() << endl;
-    cout << "Mode: " << stats.compMode() << endl;
+    double mode = stats.compMode();
+    if (isnan(mode)){ // if there is no value for mode
+        cout <<  "Mode: No Mode" << endl;
+    }
+    else{
+        cout << "Mode: " << mode << endl;
+    }
     cout << "Std Dev: " << stats.compStdDev() << endl;
     cout << "Variance: " << stats.compVar() << endl;
     cout << "Max: (" << stats.findMax().x << ", " << stats.findMax().y << ")" << endl;
@@ -119,7 +126,8 @@ int main() {
             ds.clearData(); // clear previous data before loading new file
 
             cout << "What is the filepath for your chosen csv/txt file?" << endl;
-            cin >> chosenfPath;
+            cin.ignore(); // prevents storing newline (empty line)
+            getline(cin, chosenfPath); //reads chosen path (can include spaces)
 
             if (ds.loadFile(chosenfPath) or ds.loadFile(chosenfPath + ".txt") or ds.loadFile(chosenfPath + ".csv")){
                 fileLoaded = true; // file loads successfully
