@@ -101,6 +101,14 @@ g++ src/main.cpp src/Dataset.cpp src/Histogram.cpp src/StatsCalc.cpp -o main -Wa
 | 8 | Export line plot image via gnuplot |
 | 9 | Exit program |
 
+**Note:** When loading a file (Option 1), the program automatically tries three variations of the entered path:
+1. The exact path as entered
+2. The path with `.txt` appended
+3. The path with `.csv` appended
+
+This allows users to enter just the filename without the extension if desired. 
+If both a `.txt` and `.csv` file share the same name, specify the full filename with extension to ensure the correct file is loaded.
+
 ## Test Cases
 Multiple test datasets are provided in the `tests/` folder including real-world data and edge cases.
 
